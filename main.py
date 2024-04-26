@@ -1,16 +1,67 @@
-# This is a sample Python script.
-
-# Press Strg+F5 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from src.visualization import SeesawVisualization
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press F9 to toggle the breakpoint.
+def main():
+    visualization = SeesawVisualization(30)
+    visualization.run()
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    main()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# import pygame as py
+#
+# # define constants
+# WIDTH = 500
+# HEIGHT = 500
+# FPS = 30
+#
+# # define colors
+# BLACK = (0 , 0 , 0)
+# GREEN = (0 , 255 , 0)
+#
+# # initialize pygame and create screen
+# py.init()
+# screen = py.display.set_mode((WIDTH , HEIGHT))
+# # for setting FPS
+# clock = py.time.Clock()
+#
+# # define a surface (RECTANGLE)
+# image_orig = py.Surface((500 , 5))
+# # for making transparent background while rotating an image
+# image_orig.set_colorkey(BLACK)
+# # fill the rectangle / surface with green color
+# image_orig.fill(GREEN)
+# # creating a copy of orignal image for smooth rotation
+# image = image_orig.copy()
+# image.set_colorkey(BLACK)
+# # define rect for placing the rectangle at the desired position
+# rect = image.get_rect()
+# rect.center = (WIDTH // 2 , HEIGHT // 2)
+# # keep rotating the rectangle until running is set to False
+# running = True
+# while running:
+#     # set FPS
+#     clock.tick(FPS)
+#     # clear the screen every time before drawing new objects
+#     screen.fill(BLACK)
+#     # check for the exit
+#     for event in py.event.get():
+#         if event.type == py.QUIT:
+#             running = False
+#
+#     # making a copy of the old center of the rectangle
+#     old_center = rect.center
+#     # defining angle of the rotation
+#     rot = 50
+#     # rotating the orignal image
+#     new_image = py.transform.rotate(image_orig , rot)
+#     rect = new_image.get_rect()
+#     # set the rotated rectangle to the old center
+#     rect.center = old_center
+#     # drawing the rotated rectangle to the screen
+#     screen.blit(new_image , rect)
+#     # flipping the display after drawing everything
+#     py.display.flip()
+#
+# py.quit()
