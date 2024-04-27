@@ -1,8 +1,8 @@
-from src.visualization import SeesawVisualization
+from src.visualization import VisualizationFactory, VisualizationType
 
 
 def main():
-    visualization = SeesawVisualization(30)
+    visualization = VisualizationFactory.create_visualization(VisualizationType.KEYBOARD)
     visualization.run()
 
 

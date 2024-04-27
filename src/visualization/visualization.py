@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from math import sin, tan, cos, radians
 
 import pygame
@@ -6,22 +7,27 @@ import pygame as py
 from src.simulation import Simulation
 
 
-class SeesawVisualization:
+class Visualization(ABC):
     # Parameters
     SCREEN_WIDTH = 800
     SCREEN_HEIGHT = 500
     SEESAW_LENGTH = 500
-    SEESAW_THICKNESS = 5
+    SEESAW_THICKNESS = 10
     BALL_RADIUS = 20
-    SCALE = 7
+    SCALE = 20
     # Colors
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
     BLUE = (0, 0, 255)
+    RED = (255, 0, 0)
 
-    def __init__(self, fps: int = 30, initial_angle: float = 0.0):
+    def __init__(self, simulation: Simulation, fps: int, initial_angle: float, initial_position_x: float):
+        self.simulation = simulation
         self.fps = fps
         self.angle = initial_angle
+        self.initial_position_x = initial_position_x
+        self.marker_position = 0
+        self.is_marker_visible = False
 
         self.screen = None
         self.clock = None
@@ -32,14 +38,19 @@ class SeesawVisualization:
         self.ball_surface = None
         self.ball_rect = None
 
+        self.marker_surface = None
+        self.marker_rect = None
+
         self.initialize_pygame()
         self.create_seesaw()
         self.create_ball()
+        self.create_marker()
 
     def initialize_pygame(self):
         py.init()
         self.screen = py.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         self.clock = py.time.Clock()
+        py.display.set_caption('Simulation')
 
     def create_seesaw(self):
         self.seesaw_surface = py.Surface((self.SEESAW_LENGTH, self.SEESAW_THICKNESS))
@@ -53,6 +64,14 @@ class SeesawVisualization:
         self.ball_surface = pygame.Surface((self.BALL_RADIUS * 2, self.BALL_RADIUS * 2), py.SRCALPHA)
         pygame.draw.circle(self.ball_surface, self.BLUE, (self.BALL_RADIUS, self.BALL_RADIUS), self.BALL_RADIUS)
 
+    def create_marker(self):
+        self.marker_surface = py.Surface((self.SEESAW_THICKNESS, self.SEESAW_THICKNESS))
+        self.marker_surface.set_colorkey(self.WHITE)
+        self.marker_surface.fill(self.RED)
+
+        self.marker_rect = self.marker_surface.get_rect()
+        self.marker_rect.center = (self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2)
+
     def render_seesaw(self):
         temp_center = self.seesaw_rect.center
         new_seesaw_surface = py.transform.rotate(self.seesaw_surface, self.angle)
@@ -63,37 +82,28 @@ class SeesawVisualization:
         self.screen.blit(new_seesaw_surface, new_seesaw_rect)
 
     def render_ball(self, ball_position_x: float):
-        # Calculate Ball Position based on seesaw angle
-        ball_x = self.SCREEN_WIDTH // 2 + ball_position_x - self.BALL_RADIUS * sin(radians(self.angle))
-        ball_y = self.SCREEN_HEIGHT // 2 - ball_position_x * tan(radians(self.angle)) - self.BALL_RADIUS * cos(radians(self.angle))
+        ball_x = self.SCREEN_WIDTH // 2 + ball_position_x - (self.BALL_RADIUS + self.SEESAW_THICKNESS / 2) * sin(radians(self.angle))
+        ball_y = self.SCREEN_HEIGHT // 2 - ball_position_x * tan(radians(self.angle)) - (self.BALL_RADIUS + self.SEESAW_THICKNESS / 2) * cos(radians(self.angle))
 
         ball_rect = self.ball_surface.get_rect(center=(ball_x, ball_y))
 
         self.screen.blit(self.ball_surface, ball_rect)
 
+    def render_marker(self, position: int):
+        num_positions = 9
+        marker_distance = self.SEESAW_LENGTH / (num_positions - 1)
+
+        marker_position_relative_to_seesaw_center = position * marker_distance - self.SEESAW_LENGTH // 2
+        marker_x = marker_position_relative_to_seesaw_center * cos(radians(self.angle)) + self.SCREEN_WIDTH // 2
+        marker_y = self.SCREEN_HEIGHT // 2 - (marker_x - self.SCREEN_WIDTH // 2) * tan(radians(self.angle))
+
+        new_marker_surface = py.transform.rotate(self.marker_surface, self.angle)
+
+        new_marker_rect = new_marker_surface.get_rect()
+        new_marker_rect.center = (marker_x, marker_y)
+
+        self.screen.blit(new_marker_surface, new_marker_rect)
+
+    @abstractmethod
     def run(self):
-        simulation = Simulation(mass=1, delta_t=1 / self.fps, initial_angle=self.angle)
-
-        running = True
-        while running:
-
-            self.clock.tick(self.fps)
-            self.screen.fill(self.WHITE)
-
-            for event in py.event.get():
-                if event.type == py.QUIT:
-                    running = False
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == py.K_LEFT:
-                        self.angle += 2
-                    elif event.key == py.K_RIGHT:
-                        self.angle -= 2
-
-            _, ball_position_x = simulation.next(self.angle)
-
-            self.render_seesaw()
-            self.render_ball(ball_position_x * self.SCALE)
-
-            py.display.flip()
-
-        py.quit()
+        pass

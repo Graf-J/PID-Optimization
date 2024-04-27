@@ -29,13 +29,13 @@ class Simulation:
         if angle is not None:
             self.angle = radians(angle)
 
-        # Apply Friction Force only if Element is moving fast enough (0.5 m/s is threshold)
-        if abs(self.velocity_x) > 0.5:
-            friction_force = self.ROLLING_FRICTION_COEFFICIENT * self.GRAVITY_CONSTANT * cos(self.angle) if self.velocity_x != 0 else 0
-        else:
-            friction_force = 0
+        # Apply Friction Force in corresponding direction
+        friction_force = self.ROLLING_FRICTION_COEFFICIENT * self.GRAVITY_CONSTANT * cos(self.angle)
+        if self.velocity_x < 0:
+            friction_force *= -1
+
         # Calculate Acceleration alongside the seesaw
-        acceleration_x = -((self.GRAVITY_CONSTANT * sin(self.angle) - friction_force) / self.mass)
+        acceleration_x = -((self.GRAVITY_CONSTANT * sin(self.angle) + friction_force) / self.mass)
 
         # Calculate new Velocity and Position
         self.velocity_x += acceleration_x * self.delta_t

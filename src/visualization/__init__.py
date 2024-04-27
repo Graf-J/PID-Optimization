@@ -1,1 +1,2 @@
-from .visualization import SeesawVisualization
+from .visualizationtype import VisualizationType
+from .visualizationfactory import VisualizationFactory
