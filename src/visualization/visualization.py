@@ -26,11 +26,13 @@ class Visualization(ABC):
         self.fps = fps
         self.angle = initial_angle
         self.initial_position_x = initial_position_x
-        self.marker_position = 0
+        self.marker_position = 7
         self.is_marker_visible = False
+        self.num_marker_positions = 9
 
         self.screen = None
         self.clock = None
+        self.font = None
 
         self.seesaw_surface = None
         self.seesaw_rect = None
@@ -50,6 +52,7 @@ class Visualization(ABC):
         py.init()
         self.screen = py.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         self.clock = py.time.Clock()
+        self.font = pygame.font.SysFont('arial.ttf', 30)
         py.display.set_caption('Simulation')
 
     def create_seesaw(self):
@@ -90,8 +93,7 @@ class Visualization(ABC):
         self.screen.blit(self.ball_surface, ball_rect)
 
     def render_marker(self, position: int):
-        num_positions = 9
-        marker_distance = self.SEESAW_LENGTH / (num_positions - 1)
+        marker_distance = self.SEESAW_LENGTH / (self.num_marker_positions - 1)
 
         marker_position_relative_to_seesaw_center = position * marker_distance - self.SEESAW_LENGTH // 2
         marker_x = marker_position_relative_to_seesaw_center * cos(radians(self.angle)) + self.SCREEN_WIDTH // 2
@@ -103,6 +105,21 @@ class Visualization(ABC):
         new_marker_rect.center = (marker_x, marker_y)
 
         self.screen.blit(new_marker_surface, new_marker_rect)
+
+    def render_data(self, angle: float, velocity: float, position: float):
+        # Prevent annoying fluctuations because of rolling friction coefficient
+        if abs(velocity) < 0.01:
+            velocity = 0
+
+        # Render Angle
+        angle_text_surface = self.font.render(f'Angle: {round(angle, 2)}°', True, (0, 0, 0))
+        self.screen.blit(angle_text_surface, (5, 5))
+        # Render Velocity
+        angle_text_surface = self.font.render(f'Velocity: {round(velocity, 2)} m/s', True, (0, 0, 0))
+        self.screen.blit(angle_text_surface, (5, 35))
+        # Render Position
+        angle_text_surface = self.font.render(f'Position: {round(position, 2)} m', True, (0, 0, 0))
+        self.screen.blit(angle_text_surface, (5, 65))
 
     @abstractmethod
     def run(self):

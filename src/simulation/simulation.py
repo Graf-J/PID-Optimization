@@ -19,11 +19,11 @@ class Simulation:
         self.velocity_x = initial_velocity_x
         self.position_x = initial_position_x
 
-    def next(self, angle: float | None = None) -> Tuple[float, float]:
+    def next(self, angle: float | None = None) -> Tuple[float, float, float]:
         """
         Calculates the next Position of the ball on the seesaw based on the provided parameters.
         :param angle: Angle of the seesaw in Degree
-        :return: (Angle of the seesaw in Degree, Position of the ball on the seesaw)
+        :return: Angle, Acceleration, Velocity, Position
         """
         # Update Angle if specified
         if angle is not None:
@@ -41,4 +41,4 @@ class Simulation:
         self.velocity_x += acceleration_x * self.delta_t
         self.position_x += self.velocity_x * self.delta_t
 
-        return degrees(self.angle), self.position_x
+        return degrees(self.angle), self.velocity_x, self.position_x

@@ -48,12 +48,15 @@ class KeyboardVisualization(Visualization):
                     elif event.key == py.K_0:
                         self.is_marker_visible = not self.is_marker_visible
 
-            _, ball_position_x = self.simulation.next(self.angle)
+            # Simulate next Stop
+            angle, velocity, position = self.simulation.next(self.angle)
 
+            # Render Elements
             self.render_seesaw()
-            self.render_ball(ball_position_x * self.SCALE)
+            self.render_ball(position * self.SCALE)
             if self.is_marker_visible:
                 self.render_marker(self.marker_position)
+            self.render_data(angle, velocity, position)
 
             py.display.flip()
 
