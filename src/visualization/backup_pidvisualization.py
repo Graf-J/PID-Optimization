@@ -17,28 +17,19 @@ class PIDVisualization(Visualization):
         super().__init__(simulation, fps, initial_angle, initial_position_x)
         self.pid_controller = pid_controller
 
-    def render_pid_data(self):
-        # Render P-Term
-        p_text_surface = self.font.render(f'P: {self.pid_controller.kp}', True, (0, 0, 0))
-        self.screen.blit(p_text_surface, (10, self.SCREEN_HEIGHT - 90))
-        # Render I-Term
-        i_text_surface = self.font.render(f'I:  {self.pid_controller.ki}', True, (0, 0, 0))
-        self.screen.blit(i_text_surface, (10, self.SCREEN_HEIGHT - 60))
-        # Render D-Term
-        d_text_surface = self.font.render(f'D: {self.pid_controller.kd}', True, (0, 0, 0))
-        self.screen.blit(d_text_surface, (10, self.SCREEN_HEIGHT - 30))
-
     def run(self):
+        ctr = 0
+        setpoints = [5] * 20 * 30 + [-5] * 20 * 30
+        positions = []
+        angles = []
         running = True
         while running:
             self.clock.tick(self.fps)
             self.screen.fill(self.WHITE)
 
-            # Listen on Keypress-Events
             for event in py.event.get():
                 if event.type == py.QUIT:
                     running = False
-                if event.type == py.KEYDOWN:
                     if event.key == py.K_1:
                         self.marker_position = 0
                     elif event.key == py.K_2:
@@ -64,11 +55,17 @@ class PIDVisualization(Visualization):
             angle, velocity, position = self.simulation.next(self.angle)
 
             # Calculate new angle using the PID-Controller
-            marker_distance = (self.SEESAW_LENGTH / self.SCALE) / (self.num_marker_positions - 1)
-            self.pid_controller.setpoint = self.marker_position * marker_distance - (self.SEESAW_LENGTH / self.SCALE) / 2
+            # marker_distance = (self.SEESAW_LENGTH / self.SCALE) / (self.num_marker_positions - 1)
+            # self.pid_controller.setpoint = self.marker_position * marker_distance - (self.SEESAW_LENGTH / self.SCALE) / 2
+            self.pid_controller.setpoint = setpoints[ctr]
+            print(self.pid_controller.setpoint, position)
+            if ctr == (len(setpoints)) - 2:
+                running = False
             new_angle = self.pid_controller.next(position)
-            # new_angle = self.pid_controller.next_time_based(position, 1 / self.fps)
             self.angle = new_angle
+
+            positions.append(position)
+            angles.append(new_angle)
 
             # Render Elements
             self.render_seesaw()
@@ -76,8 +73,11 @@ class PIDVisualization(Visualization):
             if self.is_marker_visible:
                 self.render_marker(self.marker_position)
             self.render_data(angle, velocity, position)
-            self.render_pid_data()
 
             py.display.flip()
 
+            ctr += 1
+
         py.quit()
+        df = pd.DataFrame({'setpoints': setpoints[:-1], 'positions': positions, 'angles': angles})
+        df.to_csv('output.csv', index=False)

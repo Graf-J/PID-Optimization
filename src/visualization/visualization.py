@@ -26,7 +26,7 @@ class Visualization(ABC):
         self.fps = fps
         self.angle = initial_angle
         self.initial_position_x = initial_position_x
-        self.marker_position = 7
+        self.marker_position = 4
         self.is_marker_visible = False
         self.num_marker_positions = 9
 
@@ -113,13 +113,13 @@ class Visualization(ABC):
 
         # Render Angle
         angle_text_surface = self.font.render(f'Angle: {round(angle, 2)}°', True, (0, 0, 0))
-        self.screen.blit(angle_text_surface, (5, 5))
+        self.screen.blit(angle_text_surface, (10, 10))
         # Render Velocity
         angle_text_surface = self.font.render(f'Velocity: {round(velocity, 2)} m/s', True, (0, 0, 0))
-        self.screen.blit(angle_text_surface, (5, 35))
+        self.screen.blit(angle_text_surface, (10, 40))
         # Render Position
         angle_text_surface = self.font.render(f'Position: {round(position, 2)} m', True, (0, 0, 0))
-        self.screen.blit(angle_text_surface, (5, 65))
+        self.screen.blit(angle_text_surface, (10, 70))
 
     @abstractmethod
     def run(self):

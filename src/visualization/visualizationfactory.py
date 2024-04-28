@@ -10,27 +10,32 @@ class VisualizationFactory:
     @staticmethod
     def create_visualization(visualization_type: VisualizationType) -> Visualization:
         # Simulation Parameters
-        mass = 1
-        fps = 60
+        fps = 30
+        mass = 0.2
         initial_angle = 0.0
-        initial_velocity_x = 0.0
-        initial_position_x = 0.0
-
+        initial_velocity = 0.0
+        initial_position = 0.0
         # Create Simulation
         simulation = Simulation(
-            mass=mass, delta_t=1 / fps,
+            mass=mass,
+            delta_t=1 / 30,
             initial_angle=initial_angle,
-            initial_position_x=initial_position_x,
-            initial_velocity_x=initial_velocity_x
+            initial_velocity_x=initial_velocity,
+            initial_position_x=initial_position
         )
 
-        # Create PID Controller
-        pid_controller = PIDController(-3, -0.001, -0.05, 1)
+        # PID-Controller Parameters
+        kp = -10
+        ki = -0.0002
+        kd = -150
+        setpoint = 0
+        # Create PID-Controller
+        pid_controller = PIDController(kp, ki, kd, setpoint)
 
         # Return Visualization
         if visualization_type == VisualizationType.KEYBOARD:
-            return KeyboardVisualization(simulation, fps, initial_angle, initial_position_x)
+            return KeyboardVisualization(simulation, fps, initial_angle, initial_position)
         elif visualization_type == VisualizationType.PID:
-            return PIDVisualization(pid_controller, simulation, fps, initial_angle, initial_position_x)
+            return PIDVisualization(pid_controller, simulation, fps, initial_angle, initial_position)
         else:
             raise NotImplementedError('Specified Visualization Type not implemented')

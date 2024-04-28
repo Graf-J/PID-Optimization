@@ -3,7 +3,7 @@ from typing import Tuple
 
 
 class Simulation:
-    ROLLING_FRICTION_COEFFICIENT = 0.05
+    ROLLING_FRICTION_COEFFICIENT = 0.04
     GRAVITY_CONSTANT = 9.81
 
     def __init__(
@@ -42,3 +42,8 @@ class Simulation:
         self.position_x += self.velocity_x * self.delta_t
 
         return degrees(self.angle), self.velocity_x, self.position_x
+
+    def reset(self):
+        self.angle = 0.0
+        self.velocity_x = 0.0
+        self.position_x = 0.0
