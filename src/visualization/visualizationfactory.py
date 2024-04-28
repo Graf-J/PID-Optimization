@@ -14,7 +14,9 @@ class VisualizationFactory:
         mass = 0.2
         initial_angle = 0.0
         initial_velocity = 0.0
-        initial_position = 0.0
+        initial_position = 5.0
+        min_angle = -60.0
+        max_angle = 60.0
         max_angle_change = 4.0
         # Create Simulation
         simulation = Simulation(
@@ -23,6 +25,8 @@ class VisualizationFactory:
             initial_angle=initial_angle,
             initial_velocity_x=initial_velocity,
             initial_position_x=initial_position,
+            min_angle=min_angle,
+            max_angle=max_angle,
             max_angle_change=max_angle_change
         )
 

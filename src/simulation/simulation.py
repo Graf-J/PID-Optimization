@@ -13,12 +13,16 @@ class Simulation:
             initial_angle: float = 0.0,
             initial_velocity_x: float = 0.0,
             initial_position_x: float = 0.0,
+            min_angle: float = -60.0,
+            max_angle: float = 60.0,
             max_angle_change: float = 4.0):
         self.mass = mass
         self.delta_t = delta_t
         self._angle = radians(initial_angle)
         self.velocity_x = initial_velocity_x
         self.position_x = initial_position_x
+        self.min_angle = min_angle
+        self.max_angle = max_angle
         self.max_angle_change = max_angle_change
 
     @property
@@ -27,12 +31,19 @@ class Simulation:
 
     @angle.setter
     def angle(self, angle: float):
+        # Check for Min and Max Angle
+        if angle > self.max_angle:
+            angle = self.max_angle
+        elif angle < self.min_angle:
+            angle = self.min_angle
+
+        # Check for Min-Change and Max-Change of Angle
         if angle > (degrees(self.angle) + self.max_angle_change):
-            self._angle = self.angle + radians(self.max_angle_change)
+            angle = degrees(self.angle) + self.max_angle_change
         elif angle < (degrees(self.angle) - self.max_angle_change):
-            self._angle = self.angle - radians(self.max_angle_change)
-        else:
-            self._angle = radians(angle)
+            angle = degrees(self.angle) - self.max_angle_change
+
+        self._angle = radians(angle)
 
     def next(self, angle: float | None = None) -> Tuple[float, float, float]:
         """
