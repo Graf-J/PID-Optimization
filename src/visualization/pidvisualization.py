@@ -30,6 +30,7 @@ class PIDVisualization(Visualization):
 
     def run(self):
         running = True
+        position = self.initial_position_x
         while running:
             self.clock.tick(self.fps)
             self.screen.fill(self.WHITE)
@@ -60,15 +61,14 @@ class PIDVisualization(Visualization):
                     elif event.key == py.K_0:
                         self.is_marker_visible = not self.is_marker_visible
 
-            # Simulate next Step
-            angle, velocity, position = self.simulation.next(self.angle)
-
             # Calculate new angle using the PID-Controller
             marker_distance = (self.SEESAW_LENGTH / self.SCALE) / (self.num_marker_positions - 1)
             self.pid_controller.setpoint = self.marker_position * marker_distance - (self.SEESAW_LENGTH / self.SCALE) / 2
             new_angle = self.pid_controller.next(position)
-            # new_angle = self.pid_controller.next_time_based(position, 1 / self.fps)
-            self.angle = new_angle
+
+            # Simulate next Step
+            angle, velocity, position = self.simulation.next(new_angle)
+            self.angle = angle
 
             # Render Elements
             self.render_seesaw()

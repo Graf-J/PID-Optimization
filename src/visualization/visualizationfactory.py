@@ -15,19 +15,21 @@ class VisualizationFactory:
         initial_angle = 0.0
         initial_velocity = 0.0
         initial_position = 0.0
+        max_angle_change = 4.0
         # Create Simulation
         simulation = Simulation(
             mass=mass,
             delta_t=1 / 30,
             initial_angle=initial_angle,
             initial_velocity_x=initial_velocity,
-            initial_position_x=initial_position
+            initial_position_x=initial_position,
+            max_angle_change=max_angle_change
         )
 
         # PID-Controller Parameters
-        kp = -10
-        ki = -0.0002
-        kd = -150
+        kp = -6.5
+        ki = -6e-05
+        kd = -45
         setpoint = 0
         # Create PID-Controller
         pid_controller = PIDController(kp, ki, kd, setpoint)

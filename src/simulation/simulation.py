@@ -12,12 +12,27 @@ class Simulation:
             delta_t: float,
             initial_angle: float = 0.0,
             initial_velocity_x: float = 0.0,
-            initial_position_x: float = 0.0):
+            initial_position_x: float = 0.0,
+            max_angle_change: float = 4.0):
         self.mass = mass
         self.delta_t = delta_t
-        self.angle = radians(initial_angle)
+        self._angle = radians(initial_angle)
         self.velocity_x = initial_velocity_x
         self.position_x = initial_position_x
+        self.max_angle_change = max_angle_change
+
+    @property
+    def angle(self) -> float:
+        return self._angle
+
+    @angle.setter
+    def angle(self, angle: float):
+        if angle > (degrees(self.angle) + self.max_angle_change):
+            self._angle = self.angle + radians(self.max_angle_change)
+        elif angle < (degrees(self.angle) - self.max_angle_change):
+            self._angle = self.angle - radians(self.max_angle_change)
+        else:
+            self._angle = radians(angle)
 
     def next(self, angle: float | None = None) -> Tuple[float, float, float]:
         """
@@ -27,7 +42,7 @@ class Simulation:
         """
         # Update Angle if specified
         if angle is not None:
-            self.angle = radians(angle)
+            self.angle = angle
 
         # Apply Friction Force in corresponding direction
         friction_force = self.ROLLING_FRICTION_COEFFICIENT * self.GRAVITY_CONSTANT * cos(self.angle)
