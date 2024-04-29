@@ -23,8 +23,8 @@ def fitness(positions: List[float], setpoints: List[float], weight_factor: float
 
 
 def prepare_data(positions: List[float], setpoints: List[float]) -> Tuple[np.ndarray, np.ndarray]:
-    positions.insert(0, 0)
-    setpoints.insert(0, 0)
+    positions = [0] + positions
+    setpoints = [0] + setpoints
 
     return np.array(positions), np.array(setpoints)
 
