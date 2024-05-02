@@ -45,9 +45,10 @@ class Simulation:
 
         self._angle = radians(angle)
 
-    def next(self, angle: float | None = None) -> Tuple[float, float, float]:
+    def next(self, angle: float | None = None, external_force: float = 0.0) -> Tuple[float, float, float]:
         """
         Calculates the next Position of the ball on the seesaw based on the provided parameters.
+        :param external_force: Force of the Wind pushing against the Ball
         :param angle: Angle of the seesaw in Degree
         :return: Angle, Acceleration, Velocity, Position
         """
@@ -60,8 +61,11 @@ class Simulation:
         if self.velocity_x < 0:
             friction_force *= -1
 
-        # Calculate Acceleration alongside the seesaw
+        # Calculate Acceleration alongside the Seesaw based on Gravity Constant
         acceleration_x = -((self.GRAVITY_CONSTANT * sin(self.angle) + friction_force) / self.mass)
+
+        # Add Wind-Force
+        acceleration_x += external_force / self.mass
 
         # Calculate new Velocity and Position
         self.velocity_x += acceleration_x * self.delta_t

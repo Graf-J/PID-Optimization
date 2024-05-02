@@ -13,8 +13,10 @@ class PIDVisualization(Visualization):
             simulation: Simulation,
             fps: int,
             initial_angle: float = 0.0,
-            initial_position_x: float = 0.0):
-        super().__init__(simulation, fps, initial_angle, initial_position_x)
+            initial_position_x: float = 0.0,
+            initial_external_force: float = 0.0,
+            max_external_force: float = 2.5):
+        super().__init__(simulation, fps, initial_angle, initial_position_x, initial_external_force, max_external_force)
         self.pid_controller = pid_controller
 
     def render_pid_data(self):
@@ -39,7 +41,16 @@ class PIDVisualization(Visualization):
             for event in py.event.get():
                 if event.type == py.QUIT:
                     running = False
-                if event.type == py.KEYDOWN:
+                elif event.type == py.KEYDOWN:
+                    # Change External Force with Arrow-Keys
+                    if event.key == py.K_LEFT:
+                        if (self.external_force - 0.5) > -self.max_external_force:
+                            self.external_force -= 0.5
+                    if event.key == py.K_RIGHT:
+                        if (self.external_force + 0.5) < self.max_external_force:
+                            self.external_force += 0.5
+
+                    # Place Position-Marker
                     if event.key == py.K_1:
                         self.marker_position = 0
                     elif event.key == py.K_2:
@@ -67,7 +78,7 @@ class PIDVisualization(Visualization):
             new_angle = self.pid_controller.next(position)
 
             # Simulate next Step
-            angle, velocity, position = self.simulation.next(new_angle)
+            angle, velocity, position = self.simulation.next(new_angle, self.external_force)
             self.angle = angle
 
             # Render Elements
@@ -75,7 +86,8 @@ class PIDVisualization(Visualization):
             self.render_ball(position * self.SCALE)
             if self.is_marker_visible:
                 self.render_marker(self.marker_position)
-            self.render_data(angle, velocity, position)
+            self.render_external_force_arrow(self.external_force)
+            self.render_data(angle, velocity, position, self.external_force)
             self.render_pid_data()
 
             py.display.flip()

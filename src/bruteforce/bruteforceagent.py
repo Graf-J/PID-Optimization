@@ -10,15 +10,15 @@ class BruteForceAgent:
         self.pid_controller = pid_controller
         self.error_fun = error_fun
 
-    def run(self, setpoints: List[float], weight_factor: float):
+    def run(self, setpoints: List[float], external_force: List[float], weight_factor: float):
         positions = []
         position = 0
-        for setpoint in setpoints:
-            self.pid_controller.setpoint = setpoint
+        for idx, _ in enumerate(setpoints):
+            self.pid_controller.setpoint = setpoints[idx]
             new_angle = self.pid_controller.next(position)
-            _, _, position = self.simulation.next(new_angle)
+            _, _, position = self.simulation.next(new_angle, external_force[idx])
             positions.append(position)
 
         error = self.error_fun(positions, setpoints, weight_factor=weight_factor)
 
-        return error
+        return error, positions
