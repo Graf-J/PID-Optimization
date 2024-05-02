@@ -14,7 +14,7 @@ class VisualizationFactory:
         mass = 0.2
         initial_angle = 0.0
         initial_velocity = 0.0
-        initial_position = 5.0
+        initial_position = 0.0
         min_angle = -60.0
         max_angle = 60.0
         max_angle_change = 4.0
@@ -31,9 +31,9 @@ class VisualizationFactory:
         )
 
         # PID-Controller Parameters
-        kp = -9.5
-        ki = 2e-05
-        kd = -25.0
+        kp = -6.4
+        ki = 0.000136
+        kd = -160
         setpoint = 0
         # Create PID-Controller
         pid_controller = PIDController(kp, ki, kd, setpoint)
