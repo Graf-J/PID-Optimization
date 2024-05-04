@@ -33,8 +33,8 @@ class VisualizationFactory:
         )
 
         # PID-Controller Parameters
-        kp = -10
-        ki = -0.032
+        kp = -8.8
+        ki = -0.018
         kd = -220
         setpoint = 0
         # Create PID-Controller
