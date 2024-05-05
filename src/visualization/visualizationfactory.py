@@ -33,9 +33,9 @@ class VisualizationFactory:
         )
 
         # PID-Controller Parameters
-        kp = -8.8
-        ki = -0.018
-        kd = -220
+        kp = -11.2721
+        ki = -0.0334
+        kd = -263.69
         setpoint = 0
         # Create PID-Controller
         pid_controller = PIDController(kp, ki, kd, setpoint)
