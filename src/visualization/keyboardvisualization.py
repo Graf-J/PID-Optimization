@@ -11,8 +11,18 @@ class KeyboardVisualization(Visualization):
             fps: int, initial_angle: float = 0.0,
             initial_position_x: float = 0.0,
             initial_external_force: float = 0.0,
-            max_external_force: float = 2.5):
-        super().__init__(simulation, fps, initial_angle, initial_position_x, initial_external_force, max_external_force)
+            max_external_force: float = 2.5,
+            log_data: bool = False,
+            log_filename: str = 'data.csv'):
+        super().__init__(
+            simulation,
+            fps,
+            initial_angle,
+            initial_position_x,
+            initial_external_force,
+            max_external_force,
+            log_data,
+            log_filename)
 
     def run(self):
         running = True
@@ -62,8 +72,11 @@ class KeyboardVisualization(Visualization):
                     elif event.key == py.K_0:
                         self.is_marker_visible = not self.is_marker_visible
 
-            # Simulate next Stop
+            # Simulate next Step
             angle, velocity, position = self.simulation.next(self.angle, self.external_force)
+
+            # Log Data
+            self.log(angle, velocity, position)
 
             # Render Elements
             self.render_seesaw()
@@ -75,5 +88,6 @@ class KeyboardVisualization(Visualization):
 
             py.display.flip()
 
+        self.save_log()
         py.quit()
 

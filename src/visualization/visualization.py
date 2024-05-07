@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from math import sin, tan, cos, radians
 
+import pandas as pd
 import pygame
 import pygame as py
 
@@ -28,7 +29,9 @@ class Visualization(ABC):
             initial_angle: float,
             initial_position_x: float,
             initial_external_force: float,
-            max_external_force: float):
+            max_external_force: float,
+            log_data: bool,
+            log_filename: str):
         self.simulation = simulation
         self.fps = fps
         self.angle = initial_angle
@@ -39,6 +42,11 @@ class Visualization(ABC):
         self.marker_position = 4
         self.is_marker_visible = False
         self.num_marker_positions = 9
+        self.log_data = log_data
+        self.log_filename = log_filename
+        self.positions = []
+        self.angles = []
+        self.velocities = []
 
         self.screen = None
         self.clock = None
@@ -177,6 +185,20 @@ class Visualization(ABC):
         external_force_text_surface = self.font.render(f'External Force: {round(external_force, 2)} N', True,
                                                        self.BLACK)
         self.screen.blit(external_force_text_surface, (10, 100))
+
+    def log(self, angle, velocity, position):
+        if self.log_data:
+            self.angles.append(angle)
+            self.velocities.append(velocity)
+            self.positions.append(position)
+
+    def save_log(self):
+        if self.log_data:
+            pd.DataFrame({
+                'angle': self.angles,
+                'velocity': self.velocities,
+                'position': self.positions
+            }).to_csv(self.log_filename, index=False)
 
     @abstractmethod
     def run(self):

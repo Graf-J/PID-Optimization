@@ -15,8 +15,18 @@ class PIDVisualization(Visualization):
             initial_angle: float = 0.0,
             initial_position_x: float = 0.0,
             initial_external_force: float = 0.0,
-            max_external_force: float = 2.5):
-        super().__init__(simulation, fps, initial_angle, initial_position_x, initial_external_force, max_external_force)
+            max_external_force: float = 2.5,
+            log_data: bool = False,
+            log_filename: str = 'data.csv'):
+        super().__init__(
+            simulation,
+            fps,
+            initial_angle,
+            initial_position_x,
+            initial_external_force,
+            max_external_force,
+            log_data,
+            log_filename)
         self.pid_controller = pid_controller
 
     def render_pid_data(self):
@@ -81,6 +91,9 @@ class PIDVisualization(Visualization):
             angle, velocity, position = self.simulation.next(new_angle, self.external_force)
             self.angle = angle
 
+            # Log Data
+            self.log(angle, velocity, position)
+
             # Render Elements
             self.render_seesaw()
             self.render_ball(position * self.SCALE)
@@ -92,4 +105,5 @@ class PIDVisualization(Visualization):
 
             py.display.flip()
 
+        self.save_log()
         py.quit()

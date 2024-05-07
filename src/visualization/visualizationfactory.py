@@ -8,7 +8,7 @@ from src.pid import PIDController
 
 class VisualizationFactory:
     @staticmethod
-    def create_visualization(visualization_type: VisualizationType) -> Visualization:
+    def create_visualization(visualization_type: VisualizationType, log_data=False, kp=0, ki=0, kd=0) -> Visualization:
         # Simulation Parameters
         fps = 30
         mass = 0.2
@@ -33,9 +33,6 @@ class VisualizationFactory:
         )
 
         # PID-Controller Parameters
-        kp = -11.2721
-        ki = -0.0334
-        kd = -263.69
         setpoint = 0
         # Create PID-Controller
         pid_controller = PIDController(kp, ki, kd, setpoint)
@@ -48,7 +45,8 @@ class VisualizationFactory:
                 initial_angle,
                 initial_position,
                 initial_external_force,
-                max_external_force
+                max_external_force,
+                log_data
             )
         elif visualization_type == VisualizationType.PID:
             return PIDVisualization(
@@ -58,7 +56,8 @@ class VisualizationFactory:
                 initial_angle,
                 initial_position,
                 initial_external_force,
-                max_external_force
+                max_external_force,
+                log_data
             )
         else:
             raise NotImplementedError('Specified Visualization Type not implemented')
