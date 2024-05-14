@@ -53,10 +53,10 @@ class PIDVisualization(Visualization):
                     running = False
                 elif event.type == py.KEYDOWN:
                     # Change External Force with Arrow-Keys
-                    if event.key == py.K_LEFT:
+                    if event.key == py.K_a:
                         if (self.external_force - 0.5) > -self.max_external_force:
                             self.external_force -= 0.5
-                    if event.key == py.K_RIGHT:
+                    if event.key == py.K_d:
                         if (self.external_force + 0.5) < self.max_external_force:
                             self.external_force += 0.5
 
